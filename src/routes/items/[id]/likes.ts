@@ -1,6 +1,6 @@
-import type { RequestHandler } from '@sveltejs/kit';
 import { getItem } from '$services/queries/items/items';
 import { likeItem, unlikeItem } from '$services/queries/likes';
+import type { RequestHandler } from '@sveltejs/kit';
 
 export const post: RequestHandler<any, any> = async ({ params, locals }) => {
 	if (!locals.session.userId) {
@@ -16,7 +16,11 @@ export const post: RequestHandler<any, any> = async ({ params, locals }) => {
 	return {
 		status: 201,
 		body: {
-			item
+			item: {
+				...item,
+				endingAt: item.endingAt.toMillis(),
+				createdAt: item.createdAt.toMillis()
+			}
 		}
 	};
 };
@@ -35,7 +39,11 @@ export const del: RequestHandler<any, any> = async ({ params, locals }) => {
 	return {
 		status: 201,
 		body: {
-			item
+			item: {
+				...item,
+				endingAt: item.endingAt.toMillis(),
+				createdAt: item.createdAt.toMillis()
+			}
 		}
 	};
 };
