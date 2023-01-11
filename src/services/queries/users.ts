@@ -9,7 +9,7 @@ export const getUserByUsername = async (username: string) => {
 
 	// make sure we actually got an Id from set
 	if (!decimalId) {
-		throw new Error("User doesn't exists");
+		throw new Error('User does not exist');
 	}
 
 	// convert it back to hex

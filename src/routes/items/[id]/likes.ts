@@ -1,6 +1,6 @@
+import type { RequestHandler } from '@sveltejs/kit';
 import { getItem } from '$services/queries/items/items';
 import { likeItem, unlikeItem } from '$services/queries/likes';
-import type { RequestHandler } from '@sveltejs/kit';
 
 export const post: RequestHandler<any, any> = async ({ params, locals }) => {
 	if (!locals.session.userId) {

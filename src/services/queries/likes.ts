@@ -7,7 +7,7 @@ export const userLikesItem = async (itemId: string, userId: string) => {
 };
 
 export const likedItems = async (userId: string) => {
-	// fetched all the Item ID's from this user's linked set
+	// fetched all the Item ID's from this user's liked set
 	const ids = await client.sMembers(userLikesKey(userId));
 
 	// fetched all the item hashes with those id's & return as array

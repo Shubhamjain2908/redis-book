@@ -1,10 +1,10 @@
-import 'dotenv/config';
+import { useCachePage, useErrors, useSession } from '$services/middlewares';
 import '$services/redis/client';
-import { DateTime } from 'luxon';
-import boxen from 'boxen';
-import type { Handle, GetSession } from '@sveltejs/kit';
+import type { GetSession, Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
-import { useCachePage, useSession, useErrors } from '$services/middlewares';
+import boxen from 'boxen';
+import 'dotenv/config';
+import { DateTime } from 'luxon';
 
 if (!process.env.REDIS_HOST) {
 	console.error(
@@ -24,5 +24,9 @@ export const getSession: GetSession = (event) => {
 };
 
 DateTime.prototype.toString = function () {
+	return this.toMillis();
+};
+
+DateTime.prototype.toJSON = function () {
 	return this.toMillis();
 };
