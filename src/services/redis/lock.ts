@@ -1,4 +1,39 @@
-export const withLock = async () => {};
+import { randomBytes } from 'crypto';
+import { client } from './client';
+
+export const withLock = async (key: string, cb: () => any) => {
+	// Intialize a few variable to control retry behaviour
+	const retryDelayMs = 100;
+	let retries = 20;
+
+	// Generate a random value to store at the lock key
+	const token = randomBytes(6).toString('hex');
+	// Create a lock key
+	const lockKey = `lock:${key}`;
+
+	// Setup a while loop to implement the retry behaviour
+	while (retries >= 0) {
+		retries--;
+		// Try to do a SET NX operation
+		const acquired = await client.set(lockKey, token, {
+			NX: true
+		});
+
+		if (!acquired) {
+			// ELSE brief pause (retryDelayMs) and then retry
+			await pause(retryDelayMs);
+			continue;
+		}
+
+		// If the set is successful, then run the callback
+		const result = await cb();
+
+		// Unset the locked set
+		await client.del(lockKey);
+
+		return result;
+	}
+};
 
 const buildClientProxy = () => {};
 
