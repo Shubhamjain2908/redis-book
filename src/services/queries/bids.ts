@@ -5,7 +5,7 @@ import { DateTime } from 'luxon';
 import { getItem } from './items';
 
 export const createBid = async (attrs: CreateBidAttrs) => {
-	return withLock(attrs.itemId, async () => {
+	return withLock(attrs.itemId, async (signal: any) => {
 		const item = await getItem(attrs.itemId);
 
 		if (!item) {
@@ -19,6 +19,10 @@ export const createBid = async (attrs: CreateBidAttrs) => {
 		}
 
 		const serialized = serializeHistory(attrs.amount, attrs.createdAt.toMillis());
+
+		if (signal.expired) {
+			throw new Error("Lock expired, can't write any more data");
+		}
 
 		return Promise.all([
 			client.rPush(bidHistoryKey(attrs.itemId), serialized),
